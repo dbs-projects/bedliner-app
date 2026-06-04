@@ -103,6 +103,10 @@
     background: #000;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
+    /* Cap stage height to roughly the canvas aspect ratio (1672:941 ≈ 56%
+       of width) so we don't get giant black bars when embedded in a tall
+       iframe. Wider iframes naturally fit. */
+    max-height: calc((100vw - 0px) * 0.563);
   }
   canvas#view { display: block; width: 100%; height: 100%; object-fit: contain; touch-action: none; }
 
@@ -192,9 +196,9 @@
   /* Swatches */
   .swatches {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
-    gap: 10px;
-    max-height: 32vh; overflow-y: auto;
+    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+    gap: 7px;
+    max-height: 22vh; overflow-y: auto;
     padding: 4px 2px 2px;
   }
   .swatch {
@@ -218,7 +222,7 @@
     content: '✓';
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 16px; font-weight: 800;
+    color: #fff; font-size: 13px; font-weight: 800;
     text-shadow: 0 1px 2px rgba(0,0,0,0.7);
     pointer-events: none;
   }
@@ -288,9 +292,10 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Landscape: hide the bottom panel so the canvas takes the full screen.
-     Topbar (logo + coverage) stays visible. */
-  @media (orientation: landscape) {
+  /* Landscape on small screens (phone held sideways): hide the bottom panel
+     so the canvas takes the full screen. Desktop windows that happen to be
+     wider than tall do NOT trigger this — the height check excludes them. */
+  @media (orientation: landscape) and (max-height: 500px) {
     .panel { display: none; }
   }
 </style>
