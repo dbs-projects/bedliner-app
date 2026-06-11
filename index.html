@@ -191,7 +191,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
-    gap: 3vw;
+    gap: 1vw;
     padding: 4px 14px;
     background: transparent;
     z-index: 5;
@@ -203,6 +203,7 @@
     flex: 0 0 auto;
     order: 2;
     width: clamp(200px, 22vw, 300px);
+    margin-top: 4vh;
     display: flex; flex-direction: column;
     gap: 5px;
   }
@@ -621,6 +622,58 @@
     animation: popIn .2s cubic-bezier(.2,.9,.3,1.3);
   }
   @keyframes popIn { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ---- First-load intro card ---- */
+  .intro-backdrop { z-index: 60; }
+  .intro-modal {
+    width: min(440px, 100%);
+    background: linear-gradient(180deg, #20232b 0%, #14151b 100%);
+    border: 1px solid var(--line-hi);
+    border-radius: 18px;
+    box-shadow: 0 28px 70px -14px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.07);
+    padding: 26px 26px 22px;
+    animation: popIn .22s cubic-bezier(.2,.9,.3,1.3);
+  }
+  .intro-head { text-align: center; margin-bottom: 18px; }
+  .intro-eyebrow {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent-light, #e8513b);
+  }
+  .intro-title {
+    margin: 6px 0 8px; font-size: 26px; font-weight: 800; color: #fff; line-height: 1.1;
+  }
+  .intro-sub {
+    margin: 0; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.7);
+  }
+  .intro-steps {
+    list-style: none; margin: 0 0 22px; padding: 0;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .intro-steps li { display: flex; align-items: flex-start; gap: 13px; }
+  .intro-num {
+    flex: 0 0 auto;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(180deg, #f5b042, #e08a18);
+    color: #2b1a02; font-weight: 800; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px -1px rgba(240,138,24,0.5);
+  }
+  .intro-steps b { color: #fff; font-size: 14.5px; }
+  .intro-steps span { color: rgba(255,255,255,0.62); font-size: 13px; line-height: 1.4; }
+  .intro-go {
+    width: 100%;
+    background: linear-gradient(180deg, #2bc36f 0%, #1f9854 100%);
+    border: 1px solid #14672f; color: #fff;
+    font-weight: 800; font-size: 16px; letter-spacing: 0.02em;
+    padding: 13px; border-radius: 11px; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 14px -2px rgba(31,152,84,0.55);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .intro-go:hover {
+    background: linear-gradient(180deg, #34d97e 0%, #25ad60 100%);
+    transform: translateY(-1px);
+  }
+  .intro-go:active { transform: translateY(0); }
   .modal-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 16px;
@@ -1130,6 +1183,35 @@
     <div class="modal-body" id="colorModalBody"></div>
   </div>
 </div>
+
+<!-- First-load intro card: explains the demo in three quick steps. -->
+<div class="modal-backdrop intro-backdrop open" id="introCard">
+  <div class="intro-modal" role="dialog" aria-modal="true" aria-label="How it works">
+    <div class="intro-head">
+      <span class="intro-eyebrow">Spray-On Bedliner Depot</span>
+      <h2 class="intro-title">Spray Your Own Liner</h2>
+      <p class="intro-sub">See how fast you can lay down a pro-grade bedliner. Beat the clock for a better quote.</p>
+    </div>
+    <ol class="intro-steps">
+      <li><span class="intro-num">1</span><div><b>Pick your truck color</b><br><span>Tap the color panel and choose a shade.</span></div></li>
+      <li><span class="intro-num">2</span><div><b>Spray the bed</b><br><span>Drag across the truck bed to coat it. Watch the Reactor gauges respond.</span></div></li>
+      <li><span class="intro-num">3</span><div><b>Reveal your finish</b><br><span>Hit 100% coverage, then peel the tape to see the result — faster is worth more.</span></div></li>
+    </ol>
+    <button class="intro-go" id="introGo">Let's get started</button>
+  </div>
+</div>
+
+<script>
+  /* Dismiss the first-load intro card. */
+  (function(){
+    var card = document.getElementById('introCard');
+    var go = document.getElementById('introGo');
+    function close(){ if (card) card.classList.remove('open'); }
+    if (go) go.addEventListener('click', close);
+    if (card) card.addEventListener('click', function(e){ if (e.target === card) close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+  })();
+</script>
 
 <script>
 /* ===== Katalyst screen controller ===== */
