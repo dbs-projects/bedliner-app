@@ -886,30 +886,39 @@
       gap: 8px;
       padding: 8px 16px 18px;
     }
-    /* Machine column is centered and capped smaller on mobile so the lower
-       section doesn't overflow the screen. The machine image and its readouts
-       share the same width so the whole stack lines up.
-       Scoped under .hud-wrap to outrank the base .machine-column rule that
-       appears later in the stylesheet. */
+    /* Machine and its Time/Earnings readouts sit SIDE BY SIDE on mobile:
+       the machine on the left (enlarged), Time + Earnings stacked vertically
+       in a narrow column on the right, filling the dead space and freeing up
+       vertical room below. Scoped under .hud-wrap to outrank the base rule. */
     .hud-wrap .machine-column {
-      width: min(58%, 260px);
-      max-width: 260px;
+      width: 100%;
+      max-width: 480px;
       align-self: center;
       order: 1;
-      gap: 8px;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
     }
     .hud-wrap .machine-column .machine {
-      width: 100%;
+      flex: 0 0 auto;
+      width: 62%;
       align-self: center;
     }
-    .hud-wrap .machine-readouts { margin-top: 0; width: 100%; }
-    /* Controls column centers under the machine. Modest top margin clears the
-       "Choose your color" callout that floats above the color panel. */
+    /* Readouts become a vertical stack to the right of the machine. */
+    .hud-wrap .machine-readouts {
+      margin-top: 0;
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: column;
+      gap: 10px;
+    }
+    /* Controls column centers under the machine row. Modest top margin clears
+       the "Choose your color" callout that floats above the color panel. */
     .hud-wrap .left-column {
       width: 100%;
       max-width: 420px;
       align-self: center;
-      margin-top: 18px;
+      margin-top: 24px;
       order: 2;
     }
     .color-callout { top: -34px; }
