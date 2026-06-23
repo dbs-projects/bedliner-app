@@ -289,7 +289,7 @@
     margin-top: 0.45em;
     font-size: clamp(7px, 0.85vw, 10px); font-weight: 800;
     letter-spacing: 0.04em;
-    color: rgba(255,255,255,0.5);
+    color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
   /* HUD column: the machine image with the controls strip stacked beneath it. */
@@ -856,6 +856,16 @@
      gap before the bottom row. Instead, size the stage to the canvas's natural
      height (canvas size unchanged) and let the machine+controls fill the rest. */
   @media (orientation: portrait) and (max-width: 820px) {
+    /* On portrait phones the full stack (canvas + machine + readouts + color
+       controls) is taller than the viewport, so allow the app to scroll
+       instead of clipping the bottom rows. */
+    html { overflow-y: auto; overflow-x: hidden; height: auto; }
+    body { overflow-y: visible; overflow-x: hidden; height: auto; min-height: 100%; }
+    .app {
+      position: relative; inset: auto;
+      min-height: 100vh;
+      height: auto;
+    }
     .stage {
       flex: 0 0 auto;
       /* Canvas art is ~1672x941. Match that aspect so there's no empty padding
@@ -865,33 +875,40 @@
       padding-bottom: 0;
     }
     /* Single centered column below the canvas: Katalyst on top, then its
-       readouts, then the color controls. Fills the width, no dead space. */
+       readouts, then the color controls. Sizes to its content (not flex-grow)
+       so the full stack can exceed the viewport height and scroll. */
     .hud-wrap {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 12px;
-      padding: 12px 14px 20px;
+      gap: 14px;
+      padding: 14px 16px 24px;
     }
-    .machine-column {
-      width: 100%;
-      max-width: 460px;
+    /* Machine column is centered and capped; the machine image and its
+       readouts share the same width so the whole stack lines up.
+       Scoped under .hud-wrap to outrank the base .machine-column rule that
+       appears later in the stylesheet. */
+    .hud-wrap .machine-column {
+      width: min(78%, 340px);
+      max-width: 340px;
+      align-self: center;
       order: 1;
+      gap: 10px;
     }
-    /* Machine image stays a sensible size; readouts span the full column so
-       the whole stack lines up edge-to-edge. */
-    .machine-column .machine {
-      width: 72%;
+    .hud-wrap .machine-column .machine {
+      width: 100%;
       align-self: center;
     }
-    .machine-readouts { margin-top: 0; }
-    /* The onboarding callout floats above the color panel; give the controls
-       column a little headroom so it doesn't collide with the readouts above. */
-    .left-column {
+    .hud-wrap .machine-readouts { margin-top: 0; width: 100%; }
+    /* Controls column matches the machine column width and centers under it.
+       Extra top margin clears the "Choose your color" callout that floats above
+       the color panel so it never overlaps the earnings readout. */
+    .hud-wrap .left-column {
       width: 100%;
-      max-width: 460px;
-      margin-top: 18px;
+      max-width: 420px;
+      align-self: center;
+      margin-top: 26px;
       order: 2;
     }
     .color-callout { top: -34px; }
