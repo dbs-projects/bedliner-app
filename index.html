@@ -876,39 +876,40 @@
     }
     /* Single centered column below the canvas: Katalyst on top, then its
        readouts, then the color controls. Sizes to its content (not flex-grow)
-       so the full stack can exceed the viewport height and scroll. */
+       so the full stack can exceed the viewport height and scroll. Kept
+       compact so the whole thing fits with minimal scrolling. */
     .hud-wrap {
       flex: 0 0 auto;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 14px;
-      padding: 14px 16px 24px;
+      gap: 8px;
+      padding: 8px 16px 18px;
     }
-    /* Machine column is centered and capped; the machine image and its
-       readouts share the same width so the whole stack lines up.
+    /* Machine column is centered and capped smaller on mobile so the lower
+       section doesn't overflow the screen. The machine image and its readouts
+       share the same width so the whole stack lines up.
        Scoped under .hud-wrap to outrank the base .machine-column rule that
        appears later in the stylesheet. */
     .hud-wrap .machine-column {
-      width: min(78%, 340px);
-      max-width: 340px;
+      width: min(58%, 260px);
+      max-width: 260px;
       align-self: center;
       order: 1;
-      gap: 10px;
+      gap: 8px;
     }
     .hud-wrap .machine-column .machine {
       width: 100%;
       align-self: center;
     }
     .hud-wrap .machine-readouts { margin-top: 0; width: 100%; }
-    /* Controls column matches the machine column width and centers under it.
-       Extra top margin clears the "Choose your color" callout that floats above
-       the color panel so it never overlaps the earnings readout. */
+    /* Controls column centers under the machine. Modest top margin clears the
+       "Choose your color" callout that floats above the color panel. */
     .hud-wrap .left-column {
       width: 100%;
       max-width: 420px;
       align-self: center;
-      margin-top: 26px;
+      margin-top: 18px;
       order: 2;
     }
     .color-callout { top: -34px; }
