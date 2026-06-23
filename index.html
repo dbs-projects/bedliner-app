@@ -802,6 +802,60 @@
      side by side — HUD on the LEFT, canvas on the RIGHT — instead of stacked.
      The top bar stays full-width across the top. Desktop windows that happen
      to be wider than tall are excluded by the max-height check. */
+  /* ===== Desktop vertical split: truck/canvas on the LEFT half, the full HUD
+     stacked vertically on the RIGHT half. Topbar stays full-width on top. ===== */
+  @media (min-width: 821px) {
+    .app {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: flex-start;
+    }
+    .topbar { width: 100%; flex: 0 0 100%; order: 0; }
+    /* Left half: the spray booth / truck canvas. */
+    .stage {
+      order: 1;
+      flex: 0 0 50%;
+      width: 50%;
+      height: calc(100vh - 53px);   /* fill below the 53px topbar */
+      min-height: 0;
+      padding-bottom: 0;
+    }
+    /* Right half: a single vertical stack — machine, then its Time/Earnings
+       gauges, then the color picker / button / coverage. */
+    .hud-wrap {
+      order: 2;
+      flex: 0 0 50%;
+      width: 50%;
+      height: calc(100vh - 53px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 18px 24px;
+      overflow-y: auto;
+    }
+    /* Machine first in the stack, gauges live with it. */
+    .hud-wrap .machine-column {
+      order: 1;
+      width: min(70%, 340px);
+      max-width: 340px;
+      align-self: center;
+      margin-top: 0;
+    }
+    /* Controls (picker + button + coverage) sit below the machine + gauges. */
+    .hud-wrap .left-column {
+      order: 2;
+      width: 100%;
+      max-width: 380px;
+      align-self: center;
+      margin-top: 22px;   /* clearance for the floating callout above the picker */
+    }
+    /* The "choose your color" callout floats above the color panel; in this
+       stacked layout give it clearance so it doesn't cover the gauges above. */
+    .hud-wrap .color-callout { top: -30px; }
+    .hud-wrap .machine-readouts { margin-bottom: 4px; }
+  }
+
   /* On narrow screens the long CTA lead-in pushes the Facebook button past
      the screen edge. Drop the lead-in and let the logos shrink so the compact
      "Let's go" pill always fits. */
