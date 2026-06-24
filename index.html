@@ -1426,7 +1426,7 @@
     <div class="intro-head">
       <span class="intro-eyebrow">Spray-On Bedliner Depot</span>
       <h2 class="intro-title">Ready to Spray for Real?</h2>
-      <p class="intro-sub">You just laid down a finish worth <strong id="ctaPayout">$750</strong>. The real thing pays just like that, on every job.</p>
+      <p class="intro-sub">You just laid down a finish worth <strong id="ctaPayout">$750</strong>. <span id="ctaPayoutLine">The real thing pays just like that, on every job.</span></p>
     </div>
     <div class="cta-audience">
       <div class="cta-aud-item">
@@ -2318,6 +2318,12 @@
   // ---------- Coverage meter ----------
   let coverageTotal = 0;
   let coveragePct = 0;
+  // High-water mark. Coverage only ever grows as you spray; the only thing that
+  // lowers it is Start Over (which resets this directly). The texture pass on
+  // stroke release briefly erodes a few just-painted pixels below the alpha
+  // threshold, which used to knock a fresh 100% back to 99% and revert the
+  // "Reveal Finish" button. Latching the max measured value prevents that.
+  let coverageMax = 0;
 
   // ---------- Timer ----------
   // Counts elapsed spray time. Starts when the user begins (Start Spraying or
@@ -2426,7 +2432,11 @@
     for(let i=0;i<sd.length;i+=4){
       if(md[i]>120){ total++; if(sd[i+3]>200) covered++; }
     }
-    const pct = total? Math.round(covered/total*100):0;
+    let pct = total? Math.round(covered/total*100):0;
+    // Never let coverage drop once reached (texture erosion on release can
+    // momentarily shave a pixel below threshold). Reset clears coverageMax.
+    if (pct > coverageMax) coverageMax = pct;
+    else pct = coverageMax;
     document.getElementById('coverageVal').textContent = pct+'%';
     const fill = document.getElementById('coverageFill');
     if (fill) fill.style.setProperty('--pct', pct+'%');
@@ -2943,7 +2953,7 @@
       lockMap = null; lockedCount = 0;
       if (preStrokeCtx) preStrokeCtx.clearRect(0,0,NATIVE_W,NATIVE_H);
       resetReveal();
-      sprayStarted = false; coveragePct = 0;
+      sprayStarted = false; coveragePct = 0; coverageMax = 0;
       resetTimer();
       document.getElementById('coverageVal').textContent = '0%';
       const fill = document.getElementById('coverageFill');
@@ -2982,13 +2992,23 @@
     const ctaDismiss = document.getElementById('ctaDismiss');
     const ctaAgain   = document.getElementById('ctaAgain');
     const ctaPayout  = document.getElementById('ctaPayout');
+    const ctaPayoutLine = document.getElementById('ctaPayoutLine');
     function hideCtaCard(){ if (ctaCard) ctaCard.classList.remove('open'); }
     // Exposed to the reveal handler above via the outer-scope binding.
     showCtaCard = function(){
       if (!ctaCard) return;
       // Echo the final payout the user earned into the card copy.
       const eEl = document.getElementById('earningsVal');
-      if (ctaPayout && eEl) ctaPayout.textContent = eEl.textContent.trim();
+      const txt = eEl ? eEl.textContent.trim() : '$750';
+      if (ctaPayout && eEl) ctaPayout.textContent = txt;
+      // If they earned the top payout, say the real thing pays the same; if
+      // they came in under it, nudge that the real thing can do even better.
+      if (ctaPayoutLine) {
+        const amount = parseInt(txt.replace(/[^0-9]/g, ''), 10) || 0;
+        ctaPayoutLine.textContent = amount >= 750
+          ? 'The real thing pays just like that, on every job.'
+          : 'The real thing can pay even better, on every job.';
+      }
       ctaCard.classList.add('open');
     };
     if (ctaDismiss) ctaDismiss.addEventListener('click', hideCtaCard);
